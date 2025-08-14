@@ -10,7 +10,11 @@ set :repo_url, "git@github.com:gupta-shridhar/shop.git"
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, "/var/www/shop"
 
-set :rvm_type, :user
+# set :rvm_type, :user
+set :rvm_type, :system
+set :rvm_custom_path, '/usr/share/rvm'
+set :default_shell, '/bin/bash -l'
+
 set :rvm_ruby_version, "#{File.read('.ruby-version').strip}@#{File.read('.ruby-gemset').strip}"
 
 set :linked_files, fetch(:linked_files, []).push("config/database.yml", "config/master.key")
