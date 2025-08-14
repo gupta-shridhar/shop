@@ -8,6 +8,15 @@ Bundler.require(*Rails.groups)
 
 module Shop
   class Application < Rails::Application
+    config.active_record.query_log_tags_enabled = true
+    config.active_record.query_log_tags = [
+      # Rails query log tags:
+      :application, :controller, :action, :job,
+      # GraphQL-Ruby query log tags:
+      current_graphql_operation: -> { GraphQL::Current.operation_name },
+      current_graphql_field: -> { GraphQL::Current.field&.path },
+      current_dataloader_source: -> { GraphQL::Current.dataloader_source_class },
+    ]
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
@@ -23,5 +32,12 @@ module Shop
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins 'http://localhost:5173', 'http://localhost:3000'
+        resource '/graphql', headers: :any, methods: [:post, :options]
+      end
+    end
   end
 end
